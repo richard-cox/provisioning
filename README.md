@@ -35,7 +35,7 @@ Set the `API` environment variable to point to your Rancher backend and run with
 yarn dev
 ```
 
-This should run the Dashboard with the example extension defined in `pkg/example`, buily and running
+This should run the Dashboard with the example extension defined in `pkg/example`, built and running
 against the Dashboard shell code checkout out in the first step above.
 
 
