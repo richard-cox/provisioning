@@ -7,18 +7,38 @@ This is work in progress.
 
 ## To use
 
-You currently need to use a fork of Rancher Dashboard that contains a few enhancements required for this
-example to work.
-
-Clone the fork of dashboard and branch.
+In a separate folder, clone this fork and branch of the Rancher Dashboard with:
 
 ```
-cd shell
+git clone -b cluster-prov-extensions https://github.com/nwmac/dashboard.git
+```
+
+Then:
+
+```
+cd dashboard/shell
 yarn link
 ```
+
+This will link the Dashboard code you checked out above for the `@rancher/shell` packages.
+
+Back in the folder for the checkout of this repository, link to the shell above with:
 
 ```
 yarn install
 yarn link @rancher/shell
 ```
 
+Set the `API` environment variable to point to your Rancher backend and run with:
+
+```
+yarn dev
+```
+
+This should run the Dashboard with the example extension defined in `pkg/example`, buily and running
+against the Dashboard shell code checkout out in the first step above.
+
+
+## Notes
+
+TODO
