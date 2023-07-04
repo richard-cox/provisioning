@@ -36,7 +36,7 @@ export class ExampleProvisioner implements IClusterProvisioner {
     return {};
   }
 
-  registerSaveHooks(registerBeforeHook: SaveHook, registerAfterHook: SaveHook, context: any) {
+  registerSaveHooks(registerBeforeHook: SaveHook, registerAfterHook: SaveHook, context: any): void {
     console.error('registerSaveHooks');
 
     console.log(registerBeforeHook);
