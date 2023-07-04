@@ -69,7 +69,7 @@ Thw following lines:
 register that no cloud credential is needed and register a custom component to be used for Machine Configuration within a node/machine pool - this
 is the same as with Node Drivers - e.g. with the OpenStack node driver example. 
 
-Lastly, we register a nwe tab to be shown when looking at the detail of a cluster provisioned with our custom provider:
+Lastly, we register a new tab to be shown when looking at the detail of a cluster provisioned with our custom provider:
 
 ```
   plugin.addTab(TabLocation.RESOURCE_DETAIL, {
