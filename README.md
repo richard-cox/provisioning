@@ -59,7 +59,7 @@ This example adds a custom provider that supports a new API with this line in th
 
 Note that `register` allows us to register an arbitrary extension and we introduce the type `provisioner`.
 
-Thw following lines:
+The following lines:
 
 ```
   plugin.register('cloud-credential', 'test', false);
