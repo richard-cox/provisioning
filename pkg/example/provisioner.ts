@@ -1,6 +1,6 @@
 import { IClusterProvisioner } from '@shell/core/types';
 
-import { PROVIDER as PROVIDER_ANNOTATION} from '@shell/config/labels-annotations';
+import { PROVIDER as PROVIDER_ANNOTATION } from '@shell/config/labels-annotations'; // TODO: RC probably this https://github.com/rancher/dashboard/issues/9242
 
 const RANCHER_CLUSTER = 'provisioning.cattle.io.cluster';
 
@@ -26,9 +26,7 @@ export class ExampleProvisioner implements IClusterProvisioner {
   }
 
   get machineConfigSchema(): any {
-    return {
-      id: 'rke-machine-config.cattle.io.testconfig'
-    };
+    return { id: 'rke-machine-config.cattle.io.testconfig' }; // TODO: RC needs to be created
   }
 
   // Create a new, populated machine pool - returns a machine pool model
@@ -43,7 +41,7 @@ export class ExampleProvisioner implements IClusterProvisioner {
     console.log(registerAfterHook);
 
     console.log(this);
-    
+
     registerBeforeHook(this.before, 'custom-before-hook');
   }
 
@@ -85,16 +83,12 @@ export class ExampleProvisioner implements IClusterProvisioner {
 
     // Create an empty cluster - this will show up as an imported cluster in the UI
     const rancherCluster = await dispatch('management/create', {
-      type: RANCHER_CLUSTER,
+      type:     RANCHER_CLUSTER,
       metadata: {
         name:      cluster.name,
         namespace: cluster.namespace,
       },
-      spec: {
-        rkeConfig: {
-
-        }
-      }
+      spec: { rkeConfig: {} }
     });
 
     console.error(rancherCluster);

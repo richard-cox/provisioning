@@ -2,5 +2,5 @@
 export default {};
 </script>
 <template>
-  <h1>Test component</h1>
+  <h1>Example Provisioner - Cluster Detail Tab</h1>
 </template>
