@@ -19,8 +19,8 @@ export default function(plugin: IPlugin) {
   plugin.register('machine-config', 'test', () => import('./src/example-machine-config.vue'));
 
   plugin.addTab(TabLocation.RESOURCE_DETAIL, {
-    resource: ['provisioning.cattle.io.cluster'],
-    params:   { type: 'test' } // TODO: RC there's no ?provider=test in the rke2 cluster detail page url
+    resource:     ['provisioning.cattle.io.cluster'],
+    customParams:   { provider: 'test' }
   }, {
     name:      'custom',
     label:     'Custom Tab',
@@ -29,3 +29,10 @@ export default function(plugin: IPlugin) {
 
   console.error('Registered Example Provisioner extension');
 }
+
+// TODO: RC Create a `-dev` build and supply instructions on how to use it
+// TODO: RC Document new extension points as part of dashboard changes
+// - resources created (cloud creds)
+// - resources needed (machine config stuff
+// TODO: RC review documentation in this repo
+// TODO: RC add @shell/config/labels-annotations to types (and regenerate types file)

@@ -1,6 +1,6 @@
 import { IClusterProvisioner } from '@shell/core/types';
 
-import { PROVIDER as PROVIDER_ANNOTATION } from '@shell/config/labels-annotations'; // TODO: RC probably this https://github.com/rancher/dashboard/issues/9242
+import { CAPI } from '@shell/config/labels-annotations';
 
 const RANCHER_CLUSTER = 'provisioning.cattle.io.cluster';
 
@@ -79,7 +79,7 @@ export class ExampleProvisioner implements IClusterProvisioner {
     const { dispatch } = this.context;
 
     cluster.metadata.annotations = cluster.metadata.annotations || {};
-    cluster.metadata.annotations[PROVIDER_ANNOTATION] = this.id;
+    cluster.metadata.annotations[CAPI.PROVIDER_UI] = this.id;
 
     // Create an empty cluster - this will show up as an imported cluster in the UI
     const rancherCluster = await dispatch('management/create', {
