@@ -23,16 +23,15 @@ export class ExampleProvisioner implements IClusterProvisioner {
     return require('./icon.svg');
   }
 
-  get machineConfigSchema(): any {
-    return { id: 'rke-machine-config.cattle.io.testconfig' }; // TODO: RC needs to be created??
+  get machineConfigSchema(): { [key: string]: any } {
+    return { id: 'rke-machine-config.cattle.io.testconfig' };
   }
 
-  // Create a new, populated machine pool - returns a machine pool model
-  createMachinePool(idx: number, pools: any) {
+  async createMachinePoolMachineConfig(idx: number, pools: any) { // eslint-disable-line require-await
     return {};
   }
 
-  registerSaveHooks(registerBeforeHook: SaveHook, registerAfterHook: SaveHook, context: any): void {
+  registerSaveHooks(registerBeforeHook: SaveHook, registerAfterHook: SaveHook, cluster: any): void {
     console.debug('registerSaveHooks');
 
     console.debug(registerBeforeHook);
@@ -43,26 +42,27 @@ export class ExampleProvisioner implements IClusterProvisioner {
     registerBeforeHook(this.before, 'custom-before-hook');
   }
 
-  before() {
+  /**
+   * Example of a function that will run in the before hook
+   */
+  before() { //
     console.debug('>>>>>>');
     console.debug(arguments);
   }
 
-  saveMachinePools() {
+  async saveMachinePoolConfigs(pools: any[], cluster: any) { // eslint-disable-line require-await
     return true;
   }
 
-  // Override which tabs should be shown
-  // Hide all
   get detailTabs() {
     return {
-      machines:     false, // custom
-      logs:         false, // custom
-      registration: false, // custom
+      machines:     false,
+      logs:         false,
+      registration: false,
       snapshots:    false,
-      related:      true, // needRelated
-      events:       true, // needEvents
-      conditions:   true, // needConditions
+      related:      true,
+      events:       false,
+      conditions:   false,
     };
   }
 

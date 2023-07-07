@@ -41,7 +41,9 @@ against the Dashboard shell code checkout out in the first step above.
 
 ## Notes
 
-The Dashboard changes in the `rancher/dashboard` repo's `cluster-prov-extensions` branch are required for this extension to work.
+The Dashboard changes in the `rancher/dashboard` repo's `cluster-prov-extensions` branch are required for this extension to work. That
+should be `yarn link`ed in to this project. Note - run `./shell/scripts/typegen.sh` in the dashboard root to ensure type definitions are
+updated to resolve typescript errors when building this extension
 
 This extension adds a new provisioner 'Example` - this illustrates a customer provisioner that leverages the RKE2 flow
 - this leveraged the same Cloud Credential and Machine Config components as with Node Drivers - but does not
