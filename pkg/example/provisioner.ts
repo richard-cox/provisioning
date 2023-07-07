@@ -1,15 +1,19 @@
-import { IClusterProvisioner } from '@shell/core/types';
+import { ClusterSaveHook, IClusterProvisioner } from '@shell/core/types';
 
 import { CAPI } from '@shell/config/labels-annotations';
 
 const RANCHER_CLUSTER = 'provisioning.cattle.io.cluster';
 
-type SaveHook = (hook: Function, name: string) => void;
-
 export class ExampleProvisioner implements IClusterProvisioner {
   static ID = 'test';
-
-  constructor(private context: any) { } // eslint-disable-line no-useless-constructor
+  /* eslint-disable no-useless-constructor */
+  constructor(private context: {
+    dispatch: any,
+    getters: any,
+    axios: any,
+    $plugin: any,
+    $t: any
+  }) { }
 
   get id(): String {
     return ExampleProvisioner.ID;
@@ -31,7 +35,7 @@ export class ExampleProvisioner implements IClusterProvisioner {
     return {};
   }
 
-  registerSaveHooks(registerBeforeHook: SaveHook, registerAfterHook: SaveHook, cluster: any): void {
+  registerSaveHooks(registerBeforeHook: ClusterSaveHook, registerAfterHook: ClusterSaveHook, cluster: any): void {
     console.debug('registerSaveHooks');
 
     console.debug(registerBeforeHook);

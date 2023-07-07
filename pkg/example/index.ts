@@ -31,9 +31,9 @@ export default function(plugin: IPlugin) {
 }
 
 // TODO: RC Create a `-dev` build and supply instructions on how to use it
-// TODO: RC Document new extension points as part of dashboard changes
-// - resources needed (machine config stuff)
-// TODO: RC review documentation in this repo
+// TODO: RC Document new extension points as part of dashboard changes. See comment in shell docusaurus/docs/extensions/home.md
+// TODO: RC review documentation in this repo. Link to docs. type def for IClusterProvisioner
 // TODO: RC TEST - provisioning as non-admin (access to mgmt namespaces)
 // TODO: RC TEST - edit / remove
 // TODO: RC TEST - refresh on create / edit page
+// TODO: RC understand - trial create a machine config
