@@ -7,14 +7,12 @@ const RANCHER_CLUSTER = 'provisioning.cattle.io.cluster';
 type SaveHook = (hook: Function, name: string) => void;
 
 export class ExampleProvisioner implements IClusterProvisioner {
-  constructor(private context: any) {
-    console.error('ExampleProvisioner');
+  static ID = 'test';
 
-    console.log(this.context);
-  }
+  constructor(private context: any) { } // eslint-disable-line no-useless-constructor
 
   get id(): String {
-    return 'test';
+    return ExampleProvisioner.ID;
   }
 
   get namespaced(): boolean {
@@ -26,7 +24,7 @@ export class ExampleProvisioner implements IClusterProvisioner {
   }
 
   get machineConfigSchema(): any {
-    return { id: 'rke-machine-config.cattle.io.testconfig' }; // TODO: RC needs to be created
+    return { id: 'rke-machine-config.cattle.io.testconfig' }; // TODO: RC needs to be created??
   }
 
   // Create a new, populated machine pool - returns a machine pool model
@@ -35,19 +33,19 @@ export class ExampleProvisioner implements IClusterProvisioner {
   }
 
   registerSaveHooks(registerBeforeHook: SaveHook, registerAfterHook: SaveHook, context: any): void {
-    console.error('registerSaveHooks');
+    console.debug('registerSaveHooks');
 
-    console.log(registerBeforeHook);
-    console.log(registerAfterHook);
+    console.debug(registerBeforeHook);
+    console.debug(registerAfterHook);
 
-    console.log(this);
+    console.debug(this);
 
     registerBeforeHook(this.before, 'custom-before-hook');
   }
 
   before() {
-    console.error('>>>>>>');
-    console.error(arguments);
+    console.debug('>>>>>>');
+    console.debug(arguments);
   }
 
   saveMachinePools() {
@@ -58,23 +56,23 @@ export class ExampleProvisioner implements IClusterProvisioner {
   // Hide all
   get detailTabs() {
     return {
-      machines:     false,
-      logs:         false,
-      registration: false,
+      machines:     false, // custom
+      logs:         false, // custom
+      registration: false, // custom
       snapshots:    false,
-      related:      false,
-      events:       false,
-      conditions:   false,
+      related:      true, // needRelated
+      events:       true, // needEvents
+      conditions:   true, // needConditions
     };
   }
 
   // Returns an array of error messages or an empty array if provisioning was successful
   async provision(cluster: any, pools: any) {
-    console.error('provision');
-    console.error('---------');
+    console.debug('provision');
+    console.debug('---------');
 
-    console.log(cluster);
-    console.log(pools);
+    console.debug(cluster);
+    console.debug(pools);
 
     const { dispatch } = this.context;
 
@@ -91,12 +89,12 @@ export class ExampleProvisioner implements IClusterProvisioner {
       spec: { rkeConfig: {} }
     });
 
-    console.error(rancherCluster);
+    console.debug(rancherCluster);
 
     try {
       await cluster.save();
     } catch (e) {
-      console.error(e);
+      console.error(e); // eslint-disable-line no-console
 
       return [e];
     }

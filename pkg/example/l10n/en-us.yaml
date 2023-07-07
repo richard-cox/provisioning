@@ -1,3 +1,7 @@
 cluster:
   provider:
     test: Example
+exampleTab:
+  title: Example Provisioner - Cluster Detail Tab
+exampleMachineConfig:
+  title: Example Provisioner - Machine Config

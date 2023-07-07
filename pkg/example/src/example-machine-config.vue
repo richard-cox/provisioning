@@ -2,5 +2,5 @@
 export default {};
 </script>
 <template>
-  <h1>Example Provisioner - Machine Config</h1>
+  <h1>{{ t('exampleMachineConfig.title') }}</h1>
 </template>

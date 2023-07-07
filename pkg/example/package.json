@@ -1,6 +1,6 @@
 {
   "name": "example",
-  "description": "example plugin",
+  "description": "Demonstrate new RKE2 provisioning hooks",
   "version": "0.1.0",
   "private": false,
   "rancher": true,

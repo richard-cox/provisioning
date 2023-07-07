@@ -13,26 +13,25 @@ export default function(plugin: IPlugin) {
   // Register custom provisioner object
 
   // Register cloud-credential component
-  plugin.register('provisioner', 'test', ExampleProvisioner);
+  plugin.register('provisioner', ExampleProvisioner.ID, ExampleProvisioner);
 
-  plugin.register('cloud-credential', 'test', false); // TODO: RC there's a comment rancher side to wire this in
-  plugin.register('machine-config', 'test', () => import('./src/example-machine-config.vue'));
+  plugin.register('cloud-credential', ExampleProvisioner.ID, false); // TODO: RC there's a comment rancher side to wire this in
+  plugin.register('machine-config', ExampleProvisioner.ID, () => import('./src/example-machine-config.vue'));
 
   plugin.addTab(TabLocation.RESOURCE_DETAIL, {
     resource:     ['provisioning.cattle.io.cluster'],
-    customParams:   { provider: 'test' }
+    customParams:   { provider: ExampleProvisioner.ID }
   }, {
     name:      'custom',
     label:     'Custom Tab',
     component: () => import('./src/example-tab.vue')
   });
-
-  console.error('Registered Example Provisioner extension');
 }
 
 // TODO: RC Create a `-dev` build and supply instructions on how to use it
 // TODO: RC Document new extension points as part of dashboard changes
 // - resources created (cloud creds)
-// - resources needed (machine config stuff
+// - resources needed (machine config stuff)
 // TODO: RC review documentation in this repo
 // TODO: RC add @shell/config/labels-annotations to types (and regenerate types file)
+// TODO: RC TEST - provisioning as non-admin (access to mgmt namespaces)

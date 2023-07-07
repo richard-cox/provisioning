@@ -41,7 +41,7 @@ against the Dashboard shell code checkout out in the first step above.
 
 ## Notes
 
-The Dashboard changes in the `cluster-prov-extensions` branch are required for this extension to work.
+The Dashboard changes in the `rancher/dashboard` repo's `cluster-prov-extensions` branch are required for this extension to work.
 
 This extension adds a new provisioner 'Example` - this illustrates a customer provisioner that leverages the RKE2 flow
 - this leveraged the same Cloud Credential and Machine Config components as with Node Drivers - but does not
@@ -74,7 +74,7 @@ Lastly, we register a new tab to be shown when looking at the detail of a cluste
 ```
   plugin.addTab(TabLocation.RESOURCE_DETAIL, {
     resource: ['provisioning.cattle.io.cluster'],
-    params: { provider: 'test' }
+    customParams: { provider: 'test' }
   }, {
     name: 'custom',
     label: 'Custom Tab',
@@ -82,13 +82,11 @@ Lastly, we register a new tab to be shown when looking at the detail of a cluste
   });
 ```
 
-Note we use the new `params` to allow us to target the tab only when the cluster is of our provider type.
+Note we use the new `customParams` to allow us to target the tab only when the cluster is of our provider type.
 
-The other main code is in `provisionner.ts`.
+The other main code is in `provisioner.ts`.
 
-This is fairly self-explanatory - I left in `detailTabs` although this is not used - the intent was to allow the provider
-to hide tabs in the detail view - I left the code out for this from the dashboard changes as I think we need a more generic
-way to allow extensions to hide tabs for resources - this was specific to clusters.
+This is fairly self-explanatory - `detailTabs` is wired in though should be made generic (extension point working with resource tabs).
 
 This example uses the `provision` method to do the provisioning - it just saves the cluster object but adds our annotation first. This is
 equivalent to what we do with an imported cluster.
