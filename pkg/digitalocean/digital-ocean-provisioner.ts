@@ -66,7 +66,7 @@ export class DigitalOceanProvisioner implements IClusterProvisioner {
     this.debug('beforeHook', ...arguments);
 
     cluster.metadata.annotations = cluster.metadata.annotations || {};
-    cluster.metadata.annotations[CAPI_LABELS.PROVIDER_UI] = DigitalOceanProvisioner.ID; // 'this' isn't this
+    cluster.metadata.annotations[CAPI_LABELS.UI_CUSTOM_PROVIDER] = DigitalOceanProvisioner.ID; // 'this' isn't this
   }
 
   async saveMachinePoolConfigs(machinePools: any[], cluster: any) { // eslint-disable-line require-await

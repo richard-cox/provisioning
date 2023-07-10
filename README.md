@@ -10,8 +10,12 @@ This is work in progress.
 In a separate folder, clone this fork and branch of the Rancher Dashboard with:
 
 ```
-git clone -b cluster-prov-extensions https://github.com/nwmac/dashboard.git
+git clone -b `master` https://github.com/rancher/dashboard.git
 ```
+
+> Until https://github.com/rancher/dashboard/pull/9246 merges use `git clone -b cluster-prov-extensions https://github.com/nwmac/dashboard.git`
+
+git clone -b cluster-prov-extensions https://github.com/nwmac/dashboard.git
 
 Then:
 
@@ -41,57 +45,48 @@ against the Dashboard shell code checkout out in the first step above.
 
 ## Notes
 
-The Dashboard changes in the `rancher/dashboard` repo's `cluster-prov-extensions` branch are required for this extension to work. That
-should be `yarn link`ed in to this project. Note - run `./shell/scripts/typegen.sh` in the dashboard root to ensure type definitions are
-updated to resolve typescript errors when building this extension
+If the definitions in `dashboard` change run `./shell/scripts/typegen.sh` in the dashboard root to update the versions used by extensions. 
 
-This extension adds a new provisioner 'Example` - this illustrates a customer provisioner that leverages the RKE2 flow
-- this leveraged the same Cloud Credential and Machine Config components as with Node Drivers - but does not
-require a node driver AND allows the custom provisioner to control the actual provisioning step in a couple of ways.
+This repository adds contains two examples that illustrates custom provisioners that leverage the RKE2 flow. The `example` extension leverages the same Cloud Credential and Machine Config components as with Node Drivers but does not require a node driver AND allows the custom provisioner to control the actual provisioning step in a couple of ways.
 
-Note that the changes to allow extensions to add cards to the provisioning screen will support using a `link` - allowing
-an extension to add a provider choice to the UI that when clicked, takes the user to a new route where the extension
-would need to take care of providing all UI and provisioning.
+Note that the changes to allow extensions to add cards to the provisioning screen will support using a `link` - allowing an extension to add a provider choice to the UI that when clicked, takes the user to a new route where the extension would need to take care of providing *all* UI and provisioning.
 
-This example adds a custom provider that supports a new API with this line in the `index.ts` file:
 
-```
-  plugin.register('provisioner', 'test', ExampleProvisioner);
-```
+## From zero to hero
 
-Note that `register` allows us to register an arbitrary extension and we introduce the type `provisioner`.
+This is a rough framework for the development of an custom provisioner extension
 
-The following lines:
+1. Create a GitHub repo for your extension
+1. Create a Rancher UI application within the repo - https://rancher.github.io/dashboard/extensions/extensions-getting-started#creating-the-skeleton-app
+1. Create a Rancher UI extension within your repo - https://rancher.github.io/dashboard/extensions/extensions-getting-started#creating-an-extension-as-a-top-level-product
+1. Run the Rancher UI and validate your extension exists - https://rancher.github.io/dashboard/extensions/extensions-getting-started#running-the-app
+1. Use the latest and greatest Rancher UI whilst developing the extension (this is only needed if the required dashboard is bleeding edge)
+   a. clone the `rancher/dashboard` repo
+   b. checkout the ?????? branch
+   c. run `yarn link`
+   d. go to your repo and run `yarn link @rancher/shell`
 
-```
-  plugin.register('cloud-credential', 'test', false);
-  plugin.register('machine-config', 'test', () => import('./src/test.vue'));
-```
+You're now ready to start developing the extension plugin
+1. Remove the `product` in you pkg's index (this is just to get you started)
+1. Read the documentation ??????
+1. Review the two example provisioning extensions in this repo
+1. Start creating and applying components and hooks in your extension
 
-register that no cloud credential is needed and register a custom component to be used for Machine Configuration within a node/machine pool - this
-is the same as with Node Drivers - e.g. with the OpenStack node driver example. 
+As part of development/testing process you should consider the following cases
+- Create, edit, remove a cluster
+- Add. edit and remove machine pools from a running cluster
+- Provisioning / Managing cluster as non-admins
+- Making use of all required features when creating/editing the cluster, specifically the vertical tabs below the machine pool section
 
-Lastly, we register a new tab to be shown when looking at the detail of a cluster provisioned with our custom provider:
-
-```
-  plugin.addTab(TabLocation.RESOURCE_DETAIL, {
-    resource: ['provisioning.cattle.io.cluster'],
-    customParams: { provider: 'test' }
-  }, {
-    name: 'custom',
-    label: 'Custom Tab',
-    component: () => import('./src/test.vue')
-  });
-```
-
-Note we use the new `customParams` to allow us to target the tab only when the cluster is of our provider type.
-
-The other main code is in `provisioner.ts`.
-
-This is fairly self-explanatory - `detailTabs` is wired in though should be made generic (extension point working with resource tabs).
-
-This example uses the `provision` method to do the provisioning - it just saves the cluster object but adds our annotation first. This is
-equivalent to what we do with an imported cluster.
-
-By adding the annotation, the cluster will be shown as type `Example` in the UI - this is determined by the localisation file `en-us` - we set
-`cluster.provider.test` to `Example`.
+Once the development process is near completion, it's best to switch to building and loading the extension rather than building the dashboard with it included
+- In your instance of rancher you will need to use the latest UI. To do so use the build we provide and the instructions at ??????
+- In your development cycle
+  - `yarn build <package name>`
+    - Note - there will be some typescript warnings until https://github.com/rancher/dashboard/issues/9242 is resolved
+  - `yarn serve-pkgs`
+  - In your dashboard enable loading of development extensions via user avatar top right --> `Preferences` --> check `Enable Extension developer features`
+  - Load your extension via burger menu top left --> `Extensions` --> three dot menu top right `Developer Load` --> add the url provided via `yarn serve-pkgs` and check 'Persist extension by creating custom resource`
+    - This behaves like any other extension and can be removed
+- In your release cycle
+  - Build your container image and helm charts, and publish them via https://rancher.github.io/dashboard/extensions/publishing
+  - These will result in a helm repo that can be added to the local/upstream cluster. Rancher will then show the extension in the Extensions page

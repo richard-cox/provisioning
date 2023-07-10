@@ -83,7 +83,7 @@ export class ExampleProvisioner implements IClusterProvisioner {
     const { dispatch } = this.context;
 
     cluster.metadata.annotations = cluster.metadata.annotations || {};
-    cluster.metadata.annotations[CAPI.PROVIDER_UI] = this.id;
+    cluster.metadata.annotations[CAPI.UI_CUSTOM_PROVIDER] = this.id;
 
     // Create an empty cluster - this will show up as an imported cluster in the UI
     const rancherCluster = await dispatch('management/create', {

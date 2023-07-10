@@ -1,0 +1,8 @@
+> This requires an instance of the dashboard running with the following changes
+> 1. `shell/store/plugins.js` `driverToFieldMap` new entry `digitaloceanexample: 'digitalocean'`
+
+# Example Provisioner for the Digital Ocean Node Driver
+
+This is example of how an extension can use the hooks in IClusterProvisioner with an existing provider. It assists in providing a more end-to-end test of clusters created using this process rather than an example of good practise. It does not cover how machine config schemas and the like are created or managed.
+
+For more information see the Rancher UI DevKit.
