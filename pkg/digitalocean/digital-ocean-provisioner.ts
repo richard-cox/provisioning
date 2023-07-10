@@ -15,8 +15,10 @@ export class DigitalOceanProvisioner implements IClusterProvisioner {
     getters: any,
     axios: any,
     $plugin: any,
-    $t: any
-  }) { }
+    $t: any,
+    isCreate: boolean, // True if the cluster is being created, false if an existing cluster being edited
+  }) {
+  }
 
   get id(): String {
     return DigitalOceanProvisioner.ID;
@@ -36,9 +38,8 @@ export class DigitalOceanProvisioner implements IClusterProvisioner {
     return this.context.getters['management/schemaFor'](schema);
   }
 
-  // TODO: RC supply namespace
-  async createMachinePoolMachineConfig(idx: number, pools: any) { // eslint-disable-line require-await
-    console.warn('do provider', 'createMachinePoolMachineConfig', idx, pools); // TODO: RC debug
+  async createMachinePoolMachineConfig(idx: number, pools: any, cluster: any) { // eslint-disable-line require-await
+    this.debug('createMachinePoolMachineConfig', idx, pools, cluster);
 
     // Default - use the schema
     const config = await this.context.dispatch('management/createPopulated', {
@@ -53,21 +54,23 @@ export class DigitalOceanProvisioner implements IClusterProvisioner {
   }
 
   registerSaveHooks(registerBeforeHook: ClusterSaveHook, registerAfterHook: ClusterSaveHook, cluster: any): void {
-    registerBeforeHook(this.before, 'custom-before-hook');
+    this.debug('registerSaveHooks', registerBeforeHook, registerAfterHook, cluster);
+
+    registerBeforeHook(this.beforeSave, 'custom-before-hook', 99, this);
   }
 
   /**
    * Example of a function that will run in the before hook
    */
-  before(cluster: any) { //
-    console.warn('do provider', 'beforeHook', ...arguments); // TODO: RC debug
+  beforeSave(cluster: any) { //
+    this.debug('beforeHook', ...arguments);
 
     cluster.metadata.annotations = cluster.metadata.annotations || {};
     cluster.metadata.annotations[CAPI_LABELS.PROVIDER_UI] = DigitalOceanProvisioner.ID; // 'this' isn't this
   }
 
   async saveMachinePoolConfigs(machinePools: any[], cluster: any) { // eslint-disable-line require-await
-    console.warn('do provider', 'saveMachinePoolConfigs', machinePools, cluster);
+    this.debug('saveMachinePoolConfigs', machinePools, cluster);
 
     const finalPools = [];
 
@@ -104,6 +107,27 @@ export class DigitalOceanProvisioner implements IClusterProvisioner {
     cluster.spec.rkeConfig.machinePools = finalPools;
   }
 
+  /**
+   * Example of a function that will save the underlying cluster resource
+   *
+   * Strictly speaking this isn't needed for this scenario, and is just a c&p of what would normally happen
+   */
+  async saveCluster(cluster: any): Promise<any> {
+    this.debug('saveCluster', cluster);
+
+    if ( this.context.isCreate ) {
+      const schema = this.context.getters['management/schemaFor'](CAPI.RANCHER_CLUSTER);
+      const url = schema.linkFor('collection');
+      const res = await cluster.save({ url });
+
+      if (res) {
+        Object.assign(cluster, res);
+      }
+    } else {
+      await cluster.save();
+    }
+  }
+
   get detailTabs() {
     return {
       machines:     true,
@@ -115,68 +139,6 @@ export class DigitalOceanProvisioner implements IClusterProvisioner {
       conditions:   true,
     };
   }
-
-  // Returns an array of error messages or an empty array if provisioning was successful
-  // async provision(cluster: any, pools: any) {
-  //   const errors = [];
-
-  //   // const isEditVersion = this.isEdit && this.liveValue?.spec?.kubernetesVersion !== this.value?.spec?.kubernetesVersion;
-  //   // const hasPspManuallyAdded = !!this.value.spec.rkeConfig?.machineGlobalConfig?.['kube-apiserver-arg'];
-
-  //   // if (isEditVersion && !this.needsPSP && hasPspManuallyAdded) {
-  //   //   if (!await this.showPspConfirmation()) {
-  //   //     return btnCb('cancelled');
-  //   //   }
-  //   // }
-
-  //   // if (isEditVersion) {
-  //   //   const shouldContinue = await this.showAddonConfirmation();
-
-  //   //   if (!shouldContinue) {
-  //   //     return btnCb('cancelled');
-  //   //   }
-  //   // }
-
-  //   // if (this.value.cloudProvider === 'aws') {
-  //   //   const missingProfileName = this.machinePools.some((mp) => !mp.config.iamInstanceProfile);
-
-  //   //   if (missingProfileName) {
-  //   //     this.errors.push(this.t('cluster.validation.iamInstanceProfileName', {}, true));
-  //   //   }
-  //   // }
-
-  //   // TODO: RC would be nice to have this
-  //   // for (const [index] of this.machinePools.entries()) { // validator machine config
-  //   //   if ( typeof this.$refs.pool[index]?.test === 'function' ) {
-  //   //     try {
-  //   //       const res = await this.$refs.pool[index].test();
-
-  //   //       if (Array.isArray(res) && res.length > 0) {
-  //   //         this.errors.push(...res);
-  //   //       }
-  //   //     } catch (e) {
-  //   //       this.errors.push(e);
-  //   //     }
-  //   //   }
-  //   // }
-
-  //   try {
-  //     this.applyChartValues(cluster.spec.rkeConfig);
-  //   } catch (err) {
-  //     errors.push(err);
-
-  //     return errors;
-  //   }
-
-  //   // Remove null profile on machineGlobalConfig - https://github.com/rancher/dashboard/issues/8480
-  //   if (cluster.spec?.rkeConfig?.machineGlobalConfig?.profile === null) {
-  //     delete cluster.spec.rkeConfig.machineGlobalConfig.profile;
-  //   }
-
-  //   await this.save(btnCb);
-  // }
-
-  // COPIED
 
   async syncMachineConfigWithLatest(machinePool: any) {
     if (machinePool?.config?.id) {
@@ -192,5 +154,9 @@ export class DigitalOceanProvisioner implements IClusterProvisioner {
       delete clonedCurrentConfig.metadata;
       machinePool.config = merge(clonedLatestConfig, clonedCurrentConfig);
     }
+  }
+
+  private debug(...args: any[]) {
+    console.debug('do provider', ...args, this.context);
   }
 }

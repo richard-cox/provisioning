@@ -31,30 +31,36 @@ export class ExampleProvisioner implements IClusterProvisioner {
     return { id: 'rke-machine-config.cattle.io.testconfig' };
   }
 
-  async createMachinePoolMachineConfig(idx: number, pools: any) { // eslint-disable-line require-await
+  async createMachinePoolMachineConfig(idx: number, pools: any, cluster: any) { // eslint-disable-line require-await
+    this.debug('createMachinePoolMachineConfig', idx, pools, cluster);
+
     return {};
   }
 
   registerSaveHooks(registerBeforeHook: ClusterSaveHook, registerAfterHook: ClusterSaveHook, cluster: any): void {
-    console.debug('registerSaveHooks');
+    this.debug('registerSaveHooks', registerBeforeHook, registerAfterHook, cluster, this);
 
-    console.debug(registerBeforeHook);
-    console.debug(registerAfterHook);
-
-    console.debug(this);
-
-    registerBeforeHook(this.before, 'custom-before-hook');
+    registerBeforeHook(this.beforeSave, 'custom-before-hook', 99, this);
+    registerAfterHook(this.afterSave, 'custom-after-hook', 99, this);
   }
 
   /**
-   * Example of a function that will run in the before hook
+   * Example of a function that will run in the before the cluster is saved
    */
-  before() { //
-    console.debug('>>>>>>');
-    console.debug(arguments);
+  beforeSave() {
+    this.debug('example provisioner before save hook', ...arguments);
+  }
+
+  /**
+   * Example of a function that will run in the after hook
+   */
+  afterSave() {
+    this.debug('example provisioner after save hook', ...arguments);
   }
 
   async saveMachinePoolConfigs(pools: any[], cluster: any) { // eslint-disable-line require-await
+    this.debug('saveMachinePoolConfigs', pools, cluster);
+
     return true;
   }
 
@@ -72,11 +78,7 @@ export class ExampleProvisioner implements IClusterProvisioner {
 
   // Returns an array of error messages or an empty array if provisioning was successful
   async provision(cluster: any, pools: any) {
-    console.debug('provision');
-    console.debug('---------');
-
-    console.debug(cluster);
-    console.debug(pools);
+    this.debug('provision', cluster, pools);
 
     const { dispatch } = this.context;
 
@@ -93,7 +95,7 @@ export class ExampleProvisioner implements IClusterProvisioner {
       spec: { rkeConfig: {} }
     });
 
-    console.debug(rancherCluster);
+    this.debug(rancherCluster);
 
     try {
       await cluster.save();
@@ -104,5 +106,9 @@ export class ExampleProvisioner implements IClusterProvisioner {
     }
 
     return [];
+  }
+
+  private debug(...args: any[]) {
+    console.debug('example provisioner', ...args, this.context);
   }
 }
