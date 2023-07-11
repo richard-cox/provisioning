@@ -1,4 +1,4 @@
-import { ClusterSaveHook, IClusterProvisioner, RegisterClusterSaveHook } from '@shell/core/types';
+import { ClusterProvisionerContext, IClusterProvisioner, RegisterClusterSaveHook } from '@shell/core/types';
 
 import { CAPI, DEFAULT_WORKSPACE } from '@shell/config/types';
 import { CAPI as CAPI_LABELS } from '@shell/config/labels-annotations';
@@ -10,17 +10,9 @@ export class DigitalOceanProvisioner implements IClusterProvisioner {
   static ID = `${ DigitalOceanProvisioner.origId }example`;
 
   /* eslint-disable no-useless-constructor */
-  constructor(private context: {
-    dispatch: any,
-    getters: any,
-    axios: any,
-    $plugin: any,
-    $t: any,
-    isCreate: boolean, // True if the cluster is being created, false if an existing cluster being edited
-  }) {
-  }
+  constructor(private context: ClusterProvisionerContext) { }
 
-  get id(): String {
+  get id(): string {
     return DigitalOceanProvisioner.ID;
   }
 

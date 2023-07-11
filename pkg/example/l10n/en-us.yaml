@@ -1,6 +1,9 @@
 cluster:
   provider:
     test: Example
+provisioner:
+  description: This is the description of the example provisioner
+  tag: Example tag
 exampleResourceDetailTab:
   title: Example Provisioner - Cluster Detail Tab
 exampleClusterConfigTab:

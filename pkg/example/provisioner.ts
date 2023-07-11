@@ -1,4 +1,4 @@
-import { ClusterSaveHook, RegisterClusterSaveHook, IClusterProvisioner } from '@shell/core/types';
+import { RegisterClusterSaveHook, IClusterProvisioner, ClusterProvisionerContext } from '@shell/core/types';
 
 import { CAPI as CAPI_LABELS } from '@shell/config/labels-annotations';
 
@@ -7,15 +7,9 @@ const RANCHER_CLUSTER = 'provisioning.cattle.io.cluster';
 export class ExampleProvisioner implements IClusterProvisioner {
   static ID = 'test';
   /* eslint-disable no-useless-constructor */
-  constructor(private context: {
-    dispatch: any,
-    getters: any,
-    axios: any,
-    $plugin: any,
-    $t: any
-  }) { }
+  constructor(private context: ClusterProvisionerContext) { }
 
-  get id(): String {
+  get id(): string {
     return ExampleProvisioner.ID;
   }
 
@@ -29,6 +23,14 @@ export class ExampleProvisioner implements IClusterProvisioner {
 
   get machineConfigSchema(): { [key: string]: any } {
     return { id: 'rke-machine-config.cattle.io.testconfig' };
+  }
+
+  get description(): string {
+    return this.context.t('provisioner.description');
+  }
+
+  get tag(): string {
+    return this.context.t('provisioner.tag');
   }
 
   async createMachinePoolMachineConfig(idx: number, pools: any, cluster: any) { // eslint-disable-line require-await
