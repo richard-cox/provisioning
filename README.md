@@ -15,8 +15,6 @@ git clone -b `master` https://github.com/rancher/dashboard.git
 
 > Until https://github.com/rancher/dashboard/pull/9246 merges use `git clone -b cluster-prov-extensions https://github.com/nwmac/dashboard.git`
 
-git clone -b cluster-prov-extensions https://github.com/nwmac/dashboard.git
-
 Then:
 
 ```
@@ -54,23 +52,33 @@ Note that the changes to allow extensions to add cards to the provisioning scree
 
 ## From zero to hero
 
-This is a rough framework for the development of an custom provisioner extension
+This is a rough framework for developing custom cluster creating from within an extension
+
+### Get to know extensions
+Read through the home page and Introduction over at https://rancher.github.io/dashboard/extensions/home. This will be the location of all the docs relating to how extensions work and what can be done with them
+
+### Create the skeleton UI and extension
 
 1. Create a GitHub repo for your extension
 1. Create a Rancher UI application within the repo - https://rancher.github.io/dashboard/extensions/extensions-getting-started#creating-the-skeleton-app
 1. Create a Rancher UI extension within your repo - https://rancher.github.io/dashboard/extensions/extensions-getting-started#creating-an-extension-as-a-top-level-product
 1. Run the Rancher UI and validate your extension exists - https://rancher.github.io/dashboard/extensions/extensions-getting-started#running-the-app
-1. Use the latest and greatest Rancher UI whilst developing the extension (this is only needed if the required dashboard is bleeding edge)
-   a. clone the `rancher/dashboard` repo
-   b. checkout the ?????? branch
-   c. run `yarn link`
-   d. go to your repo and run `yarn link @rancher/shell`
+1. Use the latest and greatest Rancher UI whilst developing the extension 
+    1. clone the `rancher/dashboard` repo
+    1. checkout the ?????? branch
+    1. run `yarn link`
+    1. go to your repo and run `yarn link @rancher/shell`
+    > Once the required Rancher UI changes are published this step won't be needed
+
+### Start developing the provisioner extension
 
 You're now ready to start developing the extension plugin
 1. Remove the `product` in you pkg's index (this is just to get you started)
-1. Read the documentation ??????
+1. Read the documentation, specifically ??????
 1. Review the two example provisioning extensions in this repo
-1. Start creating and applying components and hooks in your extension
+1. Start creating components and applying hooks in your extension
+
+#### Testing 
 
 As part of development/testing process you should consider the following cases
 - Create, edit, remove a cluster
@@ -78,20 +86,28 @@ As part of development/testing process you should consider the following cases
 - Provisioning / Managing cluster as non-admins
 - Making use of all required features when creating/editing the cluster, specifically the vertical tabs below the machine pool section
 
+#### Getting ready for Production
+
 Once the development process is near completion, it's best to switch to building and loading the extension rather than building the dashboard with it included. This involves two steps
 1. Use the shipped dashboard when building the extension
-  - Ensure that the local dashboard is not used by running `yarn unlink @rancher/shell` in the root of your repo
-  - Ensure the `package.json` entry for `rancher/dashboard` refers to the latest version
-  - `yarn install --force`
+   - Ensure that the local dashboard is not used by running `yarn unlink @rancher/shell` in the root of your repo
+   - Ensure the `package.json` entry for `rancher/dashboard` refers to the latest version
+   - `yarn install --force`
 2. Build and run your extension
-  - Development Cycle
-    - In your instance of rancher you will need to use the latest UI. To do so use the build we provide and the instructions at ??????
-    - In your development cycle
-    - `yarn build <package name>`
-    - `yarn serve-pkgs`
-    - In your dashboard enable loading of development extensions via user avatar top right --> `Preferences` --> check `Enable Extension developer features`
-    - Load your extension via burger menu top left --> `Extensions` --> three dot menu top right `Developer Load` --> add the url provided via `yarn serve-pkgs` and check 'Persist extension by creating custom resource`
-      - This behaves like any other extension and can be removed
-  - Release / Production Cycle
-    - Build your container image and helm charts, and publish them via https://rancher.github.io/dashboard/extensions/publishing
-    - These will result in a helm repo that can be added to the local/upstream cluster. Rancher will then show the extension in the Extensions page
+    - Development Cycle
+      - In your instance of rancher you will need to use the latest UI. To do so use the build we provide and the instructions at ??????
+      - In your development cycle
+      - `yarn build <package name>`
+      - `yarn serve-pkgs`
+      - In your dashboard enable loading of development extensions via user avatar top right --> `Preferences` --> check `Enable Extension developer features`
+      - Load your extension via burger menu top left --> `Extensions` --> three dot menu top right `Developer Load` --> add the url provided via `yarn serve-pkgs` and check 'Persist extension by creating custom resource`
+        - This behaves like any other extension and can be removed
+   - Release / Production Cycle
+      - Non-air-gapped Rancher Install
+         - Build your container image and helm charts, and publish to github. 
+         - These will result in a helm repo that can be added to the local/upstream cluster. Rancher will then show the extension in the Extensions page
+         - See https://rancher.github.io/dashboard/extensions/publishing
+      - Air-gapped Rancher Install
+         - Build your container image and helm charts, and publish them as an image to your container registry
+         - See https://rancher.github.io/dashboard/extensions/advanced/air-gapped-environments instead
+      
