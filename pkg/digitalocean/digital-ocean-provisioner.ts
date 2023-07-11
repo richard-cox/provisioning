@@ -30,6 +30,17 @@ export class DigitalOceanProvisioner implements IClusterProvisioner {
     return this.context.getters['management/schemaFor'](schema);
   }
 
+  /**
+   * This is an extension designed for us to test cluster creation in a more end-to-end way
+   *
+   * As such to get this working the following change has to be made dashboard side
+   *
+   * `shell/store/plugins.js` `driverToFieldMap` new entry `digitaloceanexample: 'digitalocean'`
+   */
+  get disabled() {
+    return true;
+  }
+
   async createMachinePoolMachineConfig(idx: number, pools: any, cluster: any) { // eslint-disable-line require-await
     this.debug('createMachinePoolMachineConfig', idx, pools, cluster);
 
