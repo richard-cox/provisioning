@@ -19,13 +19,25 @@ export default function(plugin: IPlugin) {
   // Register custom machine config component
   plugin.register('machine-config', ExampleProvisioner.ID, () => import('./src/example-machine-config.vue'));
 
-  // Register an example tab component shown in the cluster detail page
+  // Register an example tab component shown in the cluster detail page tabs
   plugin.addTab(TabLocation.RESOURCE_DETAIL, {
     resource:     ['provisioning.cattle.io.cluster'],
-    customParams:   { provider: ExampleProvisioner.ID }
+    context:   { provider: ExampleProvisioner.ID }
   }, {
     name:      'custom',
     label:     'Custom Tab',
-    component: () => import('./src/example-tab.vue')
+    component: () => import('./src/example-resource-detail-tab.vue')
+  });
+
+  // Register an example tab component shown in the cluster create/edit `Cluster Configuration` tabs
+  plugin.addTab(TabLocation.CLUSTER_CREATE_RKE2, {
+    resource:     ['provisioning.cattle.io.cluster'],
+    queryParam:    { type: ExampleProvisioner.ID }
+  }, {
+    name:      'custom-cluster-config',
+    labelKey:     'exampleClusterConfigTab.tabLabel',
+    weight:    1,
+    tooltip:   'This is an example tool tip',
+    component: () => import('./src/example-cluster-config-tab.vue')
   });
 }

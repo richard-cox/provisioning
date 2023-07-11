@@ -1,6 +1,6 @@
-import { ClusterSaveHook, IClusterProvisioner } from '@shell/core/types';
+import { ClusterSaveHook, RegisterClusterSaveHook, IClusterProvisioner } from '@shell/core/types';
 
-import { CAPI } from '@shell/config/labels-annotations';
+import { CAPI as CAPI_LABELS } from '@shell/config/labels-annotations';
 
 const RANCHER_CLUSTER = 'provisioning.cattle.io.cluster';
 
@@ -37,24 +37,35 @@ export class ExampleProvisioner implements IClusterProvisioner {
     return {};
   }
 
-  registerSaveHooks(registerBeforeHook: ClusterSaveHook, registerAfterHook: ClusterSaveHook, cluster: any): void {
+  registerSaveHooks(registerBeforeHook: RegisterClusterSaveHook, registerAfterHook: RegisterClusterSaveHook, cluster: any): void {
     this.debug('registerSaveHooks', registerBeforeHook, registerAfterHook, cluster, this);
 
-    registerBeforeHook(this.beforeSave, 'custom-before-hook', 99, this);
+    registerBeforeHook(this.beforeSave, 'custom-before-hook', 99);
     registerAfterHook(this.afterSave, 'custom-after-hook', 99, this);
   }
 
   /**
    * Example of a function that will run in the before the cluster is saved
+   *
+   * When `provision` is implemented the before / after save hooks are skipped
+   *
+   * This example hasn't been registered with a `fnContext` param, so the `this` context is the vue component from hte ui
    */
-  beforeSave() {
-    this.debug('example provisioner before save hook', ...arguments);
+  async beforeSave(cluster: any) { // eslint-disable-line require-await
+    console.debug('example provisioner before save hook', ...arguments);
+
+    const clusterFromComponent = (this as any).value;
+
+    clusterFromComponent.metadata.annotations = cluster.metadata.annotations || {};
+    clusterFromComponent.metadata.annotations[CAPI_LABELS.UI_CUSTOM_PROVIDER] = ExampleProvisioner.ID;
   }
 
   /**
    * Example of a function that will run in the after hook
+   *
+   * When `provision` is implemented the before / after save hooks are skipped
    */
-  afterSave() {
+  async afterSave(cluster: any) { // eslint-disable-line require-await
     this.debug('example provisioner after save hook', ...arguments);
   }
 
@@ -77,13 +88,13 @@ export class ExampleProvisioner implements IClusterProvisioner {
   }
 
   // Returns an array of error messages or an empty array if provisioning was successful
-  async provision(cluster: any, pools: any) {
+  async provision(cluster: any, pools: any): Promise<any[]> {
     this.debug('provision', cluster, pools);
 
     const { dispatch } = this.context;
 
     cluster.metadata.annotations = cluster.metadata.annotations || {};
-    cluster.metadata.annotations[CAPI.UI_CUSTOM_PROVIDER] = this.id;
+    cluster.metadata.annotations[CAPI_LABELS.UI_CUSTOM_PROVIDER] = this.id;
 
     // Create an empty cluster - this will show up as an imported cluster in the UI
     const rancherCluster = await dispatch('management/create', {

@@ -1,4 +1,4 @@
-import { ClusterSaveHook, IClusterProvisioner } from '@shell/core/types';
+import { ClusterSaveHook, IClusterProvisioner, RegisterClusterSaveHook } from '@shell/core/types';
 
 import { CAPI, DEFAULT_WORKSPACE } from '@shell/config/types';
 import { CAPI as CAPI_LABELS } from '@shell/config/labels-annotations';
@@ -53,20 +53,20 @@ export class DigitalOceanProvisioner implements IClusterProvisioner {
     return config;
   }
 
-  registerSaveHooks(registerBeforeHook: ClusterSaveHook, registerAfterHook: ClusterSaveHook, cluster: any): void {
+  registerSaveHooks(registerBeforeHook: RegisterClusterSaveHook, registerAfterHook: RegisterClusterSaveHook, cluster: any): void {
     this.debug('registerSaveHooks', registerBeforeHook, registerAfterHook, cluster);
 
-    registerBeforeHook(this.beforeSave, 'custom-before-hook', 99, this);
+    registerBeforeHook(this.beforeSave, 'custom-before-hook', 99);
   }
 
   /**
    * Example of a function that will run in the before hook
    */
-  beforeSave(cluster: any) { //
+  async beforeSave(cluster: any) { // eslint-disable-line require-await
     this.debug('beforeHook', ...arguments);
 
     cluster.metadata.annotations = cluster.metadata.annotations || {};
-    cluster.metadata.annotations[CAPI_LABELS.UI_CUSTOM_PROVIDER] = DigitalOceanProvisioner.ID; // 'this' isn't this
+    cluster.metadata.annotations[CAPI_LABELS.UI_CUSTOM_PROVIDER] = DigitalOceanProvisioner.ID;
   }
 
   async saveMachinePoolConfigs(machinePools: any[], cluster: any) { // eslint-disable-line require-await
