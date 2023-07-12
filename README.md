@@ -65,7 +65,7 @@ Read through the home page and Introduction over at https://rancher.github.io/da
 1. Run the Rancher UI and validate your extension exists - https://rancher.github.io/dashboard/extensions/extensions-getting-started#running-the-app
 1. Use the latest and greatest Rancher UI whilst developing the extension 
     1. clone the `rancher/dashboard` repo
-    1. checkout the ?????? branch
+    1. checkout the `master` branch
     1. run `yarn link`
     1. go to your repo and run `yarn link @rancher/shell`
     > Once the required Rancher UI changes are published this step won't be needed
@@ -74,7 +74,7 @@ Read through the home page and Introduction over at https://rancher.github.io/da
 
 You're now ready to start developing the extension plugin
 1. Remove the `product` in you pkg's index (this is just to get you started)
-1. Read the documentation, specifically ??????
+1. Read the documentation, specifically https://rancher.github.io/dashboard/extensions/advanced/provisioning
 1. Review the two example provisioning extensions in this repo
 1. Start creating components and applying hooks in your extension
 
@@ -95,7 +95,7 @@ Once the development process is near completion, it's best to switch to building
    - `yarn install --force`
 2. Build and run your extension
     - Development Cycle
-      - In your instance of rancher you will need to use the latest UI. To do so use the build we provide and the instructions at ??????
+      - In your instance of rancher you will need to use the latest UI. To do so use the build we provide and the instructions at https://rancher.github.io/dashboard/guide/custom-dev-build
       - In your development cycle
       - `yarn build <package name>`
       - `yarn serve-pkgs`
@@ -106,8 +106,8 @@ Once the development process is near completion, it's best to switch to building
       - Non-air-gapped Rancher Install
          - Build your container image and helm charts, and publish to github. 
          - These will result in a helm repo that can be added to the local/upstream cluster. Rancher will then show the extension in the Extensions page
-         - See https://rancher.github.io/dashboard/extensions/publishing
+         - See https://rancher.github.io/dashboard/extensions/publishing for instructions
       - Air-gapped Rancher Install
          - Build your container image and helm charts, and publish them as an image to your container registry
-         - See https://rancher.github.io/dashboard/extensions/advanced/air-gapped-environments instead
+         - See https://rancher.github.io/dashboard/extensions/advanced/air-gapped-environments for instructions
       
